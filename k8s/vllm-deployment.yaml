@@ -1,0 +1,89 @@
+# Phase 0 — K8s 单副本裸 vllm serve
+# 官方镜像 vllm/vllm-openai 已是预编译好、无 NCCL 冲突的运行时，K8s 侧无需处理安装坑。
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: vllm
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vllm-server
+  namespace: vllm
+  labels:
+    app: vllm-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vllm-server
+  template:
+    metadata:
+      labels:
+        app: vllm-server
+    spec:
+      containers:
+        - name: vllm
+          image: vllm/vllm-openai:latest   # 生产请固定版本标签，如 vllm/vllm-openai:v0.6.3
+          args:
+            - "serve"
+            - "$(MODEL_NAME)"
+            - "--host=0.0.0.0"
+            - "--port=8000"
+            - "--tensor-parallel-size=1"
+            - "--gpu-memory-utilization=0.90"
+          env:
+            # demo 用小模型；生产换 7B/更大并上调下方 GPU/内存资源
+            - name: MODEL_NAME
+              value: "Qwen/Qwen2.5-0.5B-Instruct"
+            # 可选：加速首次权重拉取（需镜像内已装 hf_transfer）
+            # - name: HF_HUB_ENABLE_HF_TRANSFER
+            #   value: "1"
+          ports:
+            - containerPort: 8000
+              name: http
+          resources:
+            limits:
+              nvidia.com/gpu: 1
+            requests:
+              nvidia.com/gpu: 1
+              cpu: "4"
+              memory: "16Gi"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 60
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 120
+            periodSeconds: 15
+          volumeMounts:
+            # vLLM 高频共享内存，容器默认 shm 易爆 → 挂内存型 emptyDir
+            - name: dshm
+              mountPath: /dev/shm
+      volumes:
+        - name: dshm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 8Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vllm-server
+  namespace: vllm
+  labels:
+    app: vllm-server
+spec:
+  type: ClusterIP
+  selector:
+    app: vllm-server
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 8000

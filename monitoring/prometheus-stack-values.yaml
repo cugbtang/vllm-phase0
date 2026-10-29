@@ -1,0 +1,13 @@
+# kube-prometheus-stack 精简配置
+prometheus:
+  prometheusSpec:
+    # 抓取所有带 release=kube-prometheus-stack 标签的 ServiceMonitor（dcgm-exporter 已带）
+    serviceMonitorSelectorNilUsesHelmValues: false
+    retention: 15d
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+
+grafana:
+  adminPassword: admin   # 生产环境务必改成强密码或使用 existingSecret

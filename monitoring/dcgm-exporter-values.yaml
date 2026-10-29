@@ -1,0 +1,11 @@
+# DCGM-Exporter：在 GPU 节点暴露 /metrics，并通过 ServiceMonitor 被 Prometheus 自动抓取
+serviceMonitor:
+  enabled: true
+  interval: 15s
+  # 必须带上与 prometheus-stack 匹配的 release 标签，否则 Prometheus 不抓
+  additionalLabels:
+    release: kube-prometheus-stack
+
+# 只在带 GPU 的节点部署
+nodeSelector:
+  nvidia.com/gpu.present: "true"

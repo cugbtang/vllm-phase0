@@ -1,0 +1,7 @@
+# Python venv created by install_vllm_uv.sh
+.venv/
+__pycache__/
+*.pyc
+
+# local secrets / env
+.env
