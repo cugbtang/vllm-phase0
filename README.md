@@ -8,6 +8,8 @@
 vllm-phase0/
 ├── README.md
 ├── install_vllm_uv.sh              # 裸金属/云主机用 uv 装 vLLM（规避 NCCL 冲突）
+├── docs/
+│   └── ai-infra-interview-checklist.md  # AI Infra 六层面试/学习检查清单
 ├── k8s/
 │   └── vllm-deployment.yaml        # K8s 单副本 Deployment + Service（裸 vllm serve）
 └── monitoring/
@@ -73,6 +75,10 @@ bash monitoring/install-monitoring.sh
 - [ ] `curl /v1/chat/completions` 能拿到推理结果（OpenAI 兼容）
 - [ ] Prometheus Targets 中 dcgm-exporter = UP
 - [ ] Grafana GPU 面板能看到利用率曲线
+
+## 学习资料
+
+- [AI Infra 六层面试 / 学习检查清单](docs/ai-infra-interview-checklist.md)：按硬件 / 集群网络 / 训练 / 推理 / 服务与成本 / 数据与 MLOps 六层组织，每层含「概念必答、动手验证、面试高频」。其中 L4、L5 的压测指标（TTFT、TPOT、prefix cache 命中率、KV Cache 显存占用）可直接作为本仓库监控看板的补充验收项。
 
 ## 关键坑回顾
 
