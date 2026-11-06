@@ -81,6 +81,7 @@ bash monitoring/install-monitoring.sh
 
 - [AI Infra 六层面试 / 学习检查清单](docs/ai-infra-interview-checklist.md)：按硬件 / 集群网络 / 训练 / 推理 / 服务与成本 / 数据与 MLOps 六层组织，每层含「概念必答、动手验证、面试高频」。其中 L4、L5 的压测指标（TTFT、TPOT、prefix cache 命中率、KV Cache 显存占用）可直接作为本仓库监控看板的补充验收项。
 - [《30分钟搞定 AI Infra 核心知识点》完整逐字稿](docs/ai-infra-transcript.md)：B 站 `BV1Uvn86pERP` 音频转录，带 `[mm:ss]` 时间戳、章节导航与 ASR 术语校正表，可用于回查清单里每条结论的原始出处。
+- 进度看板：[AI Infra 六层通关](https://github.com/cugbtang/vllm-phase0/milestone/1)（9 个分层 issue，勾选任务即可记录进度）。
 
 ## 关键坑回顾
 
